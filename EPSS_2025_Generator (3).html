@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generator Bukti Dukung EPSS 2025 — Kota Pangkalpinang</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eef2f7;color:#1e293b;min-height:100vh}
+.header{background:linear-gradient(135deg,#0f3460,#1a6b8a);color:#fff;padding:16px 32px;display:flex;align-items:center;gap:14px}
+.header-icon{font-size:28px}
+.header h1{font-size:17px;font-weight:700;line-height:1.3}
+.header p{font-size:11px;opacity:.7;margin-top:2px}
+.container{max-width:860px;margin:24px auto;padding:0 18px}
+.steps{display:flex;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:20px}
+.step{flex:1;padding:12px 8px;text-align:center;font-size:11px;font-weight:700;color:#94a3b8;border-right:1px solid #f1f5f9;transition:all .25s}
+.step:last-child{border-right:none}
+.step .sico{font-size:16px;display:block;margin-bottom:2px}
+.step.active{background:#0f3460;color:#fff}
+.step.done{background:#f0fdf4;color:#16a34a}
+.card{background:#fff;border-radius:12px;padding:26px 30px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.card-title{font-size:18px;font-weight:700;color:#0f3460;margin-bottom:4px}
+.card-desc{font-size:13px;color:#64748b;margin-bottom:22px}
+.form-row{display:grid;gap:14px;margin-bottom:14px}
+.col2{grid-template-columns:1fr 1fr}
+.col3{grid-template-columns:1fr 1fr 1fr}
+.fg label{display:block;font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.fg label .opt{font-size:10px;color:#94a3b8;text-transform:none;font-weight:400;letter-spacing:0}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:13px;color:#1e293b;font-family:inherit;transition:border .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px rgba(15,52,96,.08)}
+.fg textarea{resize:vertical;min-height:72px;line-height:1.5}
+.btn{padding:10px 22px;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#0f3460;color:#fff}.btn-primary:hover{background:#0a2540}
+.btn-secondary{background:#f1f5f9;color:#374151;border:1.5px solid #e2e8f0}.btn-secondary:hover{background:#e2e8f0}
+.btn-copy{background:#0f9488;color:#fff;font-size:12px;padding:6px 14px}.btn-copy:hover{background:#0d7a70}
+.btn-copyall{background:#16a34a;color:#fff}.btn-copyall:hover{background:#15803d}
+.btn-group{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid #f1f5f9}
+.apikey-box{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:18px 20px;margin-bottom:20px}
+.apikey-box .abtitle{font-size:13px;font-weight:700;color:#0f3460;margin-bottom:10px}
+.apikey-row{display:flex;gap:10px;align-items:flex-end}
+.apikey-row .fg{flex:1;margin:0}
+.apikey-row .fg input{font-family:monospace}
+.key-status{font-size:12px;margin-top:6px;padding:5px 10px;border-radius:5px;display:none}
+.key-status.ok{background:#f0fdf4;color:#16a34a;display:block}
+.key-status.bad{background:#fef2f2;color:#dc2626;display:block}
+.dom-group{margin-bottom:16px}
+.dom-title{font-size:12px;font-weight:700;color:#0f3460;background:#eff6ff;border-left:4px solid #0f3460;padding:8px 14px;border-radius:0 7px 7px 0;margin-bottom:8px}
+.ind-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:7px;margin-bottom:5px;transition:all .18s}
+.ind-item:hover{border-color:#93c5fd;background:#f8faff}
+.ind-item.sel{border-color:#0f3460;background:#eff6ff}
+.ind-item input[type=checkbox]{margin-top:2px;accent-color:#0f3460;width:15px;height:15px;flex-shrink:0;cursor:pointer}
+.ind-code{font-size:10px;font-weight:700;color:#0f3460;background:#dbeafe;padding:2px 6px;border-radius:4px;white-space:nowrap}
+.ind-name{font-size:12px;font-weight:600;margin-bottom:2px}
+.ind-hint{font-size:11px;color:#64748b}
+.sel-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.sel-bar button{font-size:11px;padding:4px 10px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;cursor:pointer;color:#374151}
+.sel-bar button:hover{background:#f1f5f9}
+.sel-bar span{font-size:12px;color:#64748b;margin-left:auto}
+.loading{text-align:center;padding:50px 20px}
+.spinner{width:50px;height:50px;border:4px solid #e2e8f0;border-top-color:#0f3460;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.log-box{background:#f8fafc;border-radius:7px;padding:12px 14px;margin-top:14px;text-align:left;max-height:150px;overflow-y:auto}
+.log-line{font-size:12px;color:#64748b;padding:2px 0}
+.log-line.ok{color:#16a34a}
+.log-line.err{color:#dc2626}
+.log-line.warn{color:#d97706}
+.result-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.result-meta{font-size:12px;color:#64748b;margin-top:2px}
+.dom-section{margin-bottom:24px}
+.dom-section-title{font-size:12px;font-weight:700;color:#0f3460;background:#eff6ff;border-left:4px solid #0f3460;padding:8px 14px;border-radius:0 7px 7px 0;margin-bottom:10px}
+.narr-block{border:1.5px solid #e2e8f0;border-radius:8px;margin-bottom:10px;overflow:hidden}
+.narr-top{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0;flex-wrap:wrap;gap:6px}
+.narr-body{padding:14px;font-size:13px;line-height:1.85;color:#374151;white-space:pre-line;background:#fff}
+.narr-edit{width:100%;min-height:180px;font-size:13px;line-height:1.85;padding:14px;border:none;border-top:1px solid #e2e8f0;font-family:inherit;color:#374151;resize:vertical;display:none}
+.info-note{background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:16px;display:flex;gap:8px;line-height:1.6}
+.toast{position:fixed;bottom:24px;right:24px;background:#0f9488;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">🏛️</div>
+  <div>
+    <div style="font-size:10px;opacity:.6;margin-bottom:1px">PEMERINTAH KOTA PANGKALPINANG</div>
+    <h1>Generator Bukti Dukung EPSS 2025</h1>
+    <p>Evaluasi Penyelenggaraan Statistik Sektoral — Powered by AI Claude</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="steps">
+    <div class="step active" id="st1"><span class="sico">📋</span>Informasi OPD</div>
+    <div class="step" id="st2"><span class="sico">☑️</span>Pilih Indikator</div>
+    <div class="step" id="st3"><span class="sico">⚙️</span>Generate AI</div>
+    <div class="step" id="st4"><span class="sico">📋</span>Salin Hasil</div>
+  </div>
+
+  <!-- SCREEN 1 -->
+  <div id="sc1" class="card">
+    <div class="card-title">⚙️ Setup & Informasi Kegiatan</div>
+    <div class="card-desc">Masukkan API Key Anthropic, lalu isi data kegiatan statistik.</div>
+
+    <div class="apikey-box">
+      <div class="abtitle">🔑 Anthropic API Key</div>
+      <div class="apikey-row">
+        <div class="fg">
+          <label>API Key <span class="opt">— format: sk-ant-api03-xxxx</span></label>
+          <input type="password" id="f_apikey" placeholder="sk-ant-api03-..." oninput="checkKey()">
+        </div>
+        <button class="btn btn-secondary" style="flex-shrink:0" onclick="toggleKeyVis()">👁</button>
+      </div>
+      <div class="key-status" id="key-status"></div>
+      <div style="font-size:11px;color:#64748b;margin-top:8px;line-height:1.7">
+        📌 Dapatkan API Key di <b>console.anthropic.com</b> → Settings → API Keys → Create Key<br>
+        🔒 API Key hanya tersimpan sementara di memori browser, tidak dikirim ke mana-mana selain ke Anthropic.
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="fg">
+        <label>OPD yang Dinilai *</label>
+        <select id="f_opd">
+          <option value="">— Pilih OPD —</option>
+          <option value="dispar">Dinas Pariwisata Kota Pangkalpinang</option>
+          <option value="disdik">Dinas Pendidikan dan Kebudayaan Kota Pangkalpinang</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Nama Kegiatan Statistik *</label>
+        <input id="f_kegiatan" type="text" placeholder="Contoh: Penyediaan Informasi Pariwisata Kota Pangkalpinang Tahun 2025">
+      </div>
+    </div>
+    <div class="form-row col3">
+      <div class="fg">
+        <label>Tahun</label>
+        <input id="f_tahun" type="number" value="2025">
+      </div>
+      <div class="fg">
+        <label>Jenis Pengumpulan</label>
+        <select id="f_jenis">
+          <option value="Kompilasi Data Administrasi">Kompilasi Administrasi</option>
+          <option value="Survei">Survei</option>
+          <option value="Sensus">Sensus</option>
+          <option value="Kompilasi Produk Administrasi">Kompilasi Produk Administrasi</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Sektor</label>
+        <select id="f_sektor">
+          <option value="Pariwisata">Pariwisata</option>
+          <option value="Pendidikan">Pendidikan</option>
+          <option value="Kesehatan">Kesehatan</option>
+          <option value="Ekonomi">Ekonomi</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Deskripsi Kegiatan <span class="opt">(sangat membantu AI — isi selengkap mungkin)</span></label>
+        <textarea id="f_deskripsi" placeholder="Jelaskan tujuan, ruang lingkup, manfaat, dan latar belakang kegiatan statistik ini..."></textarea>
+      </div>
+    </div>
+    <div class="form-row col2">
+      <div class="fg">
+        <label>Indikator / Variabel Utama <span class="opt">(opsional)</span></label>
+        <textarea id="f_indikator" style="min-height:60px" placeholder="Contoh: jumlah kunjungan wisatawan, jumlah hotel..."></textarea>
+      </div>
+      <div class="fg">
+        <label>Sumber Data <span class="opt">(opsional)</span></label>
+        <textarea id="f_sumber" style="min-height:60px" placeholder="Contoh: pengelola objek wisata, hotel, BPS..."></textarea>
+      </div>
+    </div>
+    <div class="form-row col2">
+      <div class="fg">
+        <label>Tanggal Mulai Kegiatan</label>
+        <input id="f_mulai" type="text" placeholder="Contoh: 02 Januari 2025">
+      </div>
+      <div class="fg">
+        <label>Tanggal Selesai / Diseminasi</label>
+        <input id="f_selesai" type="text" placeholder="Contoh: 30 Juni 2025">
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="goStep2()">Lanjut: Pilih Indikator →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2 -->
+  <div id="sc2" class="card" style="display:none">
+    <div class="card-title">☑️ Pilih Indikator</div>
+    <div class="card-desc">Pilih indikator yang perlu dibuat narasi bukti dukungnya.</div>
+    <div class="sel-bar">
+      <button onclick="selectAll(true)">✓ Pilih Semua</button>
+      <button onclick="selectAll(false)">✗ Hapus Semua</button>
+      <span id="sel-count"></span>
+    </div>
+    <div id="ind-list"></div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="goStep1()">← Kembali</button>
+      <button class="btn btn-primary" onclick="goStep3()">⚙️ Generate Narasi AI →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3 -->
+  <div id="sc3" class="card" style="display:none">
+    <div class="loading">
+      <div class="spinner"></div>
+      <div class="card-title">AI sedang membuat narasi...</div>
+      <p style="font-size:13px;color:#64748b;margin-top:6px">Mohon tunggu sekitar 15–45 detik</p>
+      <div class="log-box" id="log-box"></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4 -->
+  <div id="sc4" class="card" style="display:none">
+    <div class="result-header">
+      <div>
+        <div class="card-title">✅ Narasi Siap — Tinggal Salin!</div>
+        <div class="result-meta" id="sc4-sub"></div>
+      </div>
+      <button class="btn btn-copyall" onclick="copyAll()">📋 Salin Semua Teks</button>
+    </div>
+    <div class="info-note">
+      💡 <div>Klik <b>📋 Salin</b> per indikator, atau <b>📋 Salin Semua Teks</b> untuk seluruh dokumen. Setiap narasi bisa diedit sebelum disalin.</div>
+    </div>
+    <div id="result-content"></div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="goStep2()">← Ubah Pilihan</button>
+      <button class="btn btn-copyall" onclick="copyAll()">📋 Salin Semua Teks</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Indicator data ─────────────────────────────────────────────────────────────
+const INDS = {
+  dispar:[
+    {dom:"Domain 1 — Prinsip Satu Data Indonesia",items:[
+      {c:"10101",n:"Tingkat Kematangan Penerapan SDS",h:"Screenshot SDS di INDAH + kesesuaian variabel/indikator dengan SDSN"},
+      {c:"10201",n:"Tingkat Kematangan Penerapan Metadata Statistik",h:"Screenshot metadata kegiatan, variabel, indikator utama di INDAH"},
+      {c:"10301",n:"Tingkat Kematangan Penerapan Interoperabilitas Data",h:"Screenshot API/webservice atau notulensi rapat evaluasi interoperabilitas"},
+      {c:"10401",n:"Tingkat Kematangan Penerapan Kode Referensi",h:"Screenshot penggunaan kode referensi pada raw data dan penyajian data"}
+    ]},
+    {dom:"Domain 2 — Kualitas Data",items:[
+      {c:"20101",n:"Tingkat Kematangan Relevansi Data Terhadap Pengguna",h:"KAK/TOR + surat permintaan data dari instansi lain"},
+      {c:"20102",n:"Tingkat Kematangan Proses Identifikasi Kebutuhan Data",h:"KAK/TOR yang memuat latar belakang dan tujuan kegiatan"},
+      {c:"20201",n:"Tingkat Kematangan Penilaian Akurasi Data",h:"Laporan dan dokumentasi pemeriksaan data secara sistematis"},
+      {c:"20301",n:"Tingkat Kematangan Penjaminan Aktualitas Data",h:"KAK yang memuat jadwal dari perencanaan hingga penyebarluasan"},
+      {c:"20302",n:"Tingkat Kematangan Pemantauan Ketepatan Waktu Diseminasi",h:"Laporan monitoring ketepatan waktu + ketersediaan di portal data"},
+      {c:"20401",n:"Tingkat Kematangan Ketersediaan Data untuk Pengguna Data",h:"Katalog data, dokumen metadata, SS publikasi di website dan portal"},
+      {c:"20402",n:"Tingkat Kematangan Akses Media Penyebarluasan Data",h:"SS penyebarluasan di website, media sosial, portal data Pangkalpinang"},
+      {c:"20403",n:"Tingkat Kematangan Penyediaan Format Data",h:"SS portal yang menunjukkan berbagai format unduhan (xls, pdf, csv, dll)"},
+      {c:"20501",n:"Tingkat Kematangan Keterbandingan Data",h:"Laporan analisis keterbandingan antarwaktu/antarwilayah"},
+      {c:"20502",n:"Tingkat Kematangan Konsistensi Statistik",h:"Laporan analisis konsistensi dengan data BPS atau sumber lain"}
+    ]},
+    {dom:"Domain 3 — Proses Bisnis Statistik",items:[
+      {c:"30101",n:"Tingkat Kematangan Pendefinisian Kebutuhan Statistik",h:"KAK/TOR yang memuat latar belakang, tujuan, identifikasi kebutuhan"},
+      {c:"30102",n:"Tingkat Kematangan Desain Statistik",h:"Rancangan output/tabel, sistem alur kerja (jadwal kegiatan)"},
+      {c:"30103",n:"Tingkat Kematangan Penyiapan Instrumen",h:"Template publikasi/laporan, template excel beserta penjelasannya"},
+      {c:"30201",n:"Tingkat Kematangan Proses Pengumpulan Data",h:"Dokumentasi pengumpulan data + surat tugas/surat permintaan data"},
+      {c:"30301",n:"Tingkat Kematangan Pengolahan Data",h:"SS aplikasi pengolahan (Excel/software) + proses entri data"},
+      {c:"30302",n:"Tingkat Kematangan Analisis Data",h:"Publikasi/laporan yang memuat narasi/analisis yang mendeskripsikan data"},
+      {c:"30401",n:"Tingkat Kematangan Diseminasi Data",h:"Publikasi/laporan resmi yang memuat data-data yang dihasilkan"}
+    ]},
+    {dom:"Domain 4 — Kelembagaan Statistik",items:[
+      {c:"40101",n:"Tingkat Kematangan Penjaminan Transparansi Informasi Statistik",h:"Laporan/publikasi yang menampilkan metodologi dan pemanfaatan data"},
+      {c:"40102",n:"Tingkat Kematangan Penjaminan Netralitas dan Obyektivitas",h:"Laporan yang mencantumkan sumber data dan metodologi yang dapat diperbandingkan"},
+      {c:"40301",n:"Tingkat Kematangan Kolaborasi Penyelenggaraan Kegiatan Statistik",h:"SK Tim Kerja Kegiatan Statistik OPD"},
+      {c:"40303",n:"Tingkat Kematangan Kolaborasi dengan Pembina Data Statistik (BPS)",h:"SS percakapan atau foto pertemuan/koordinasi dengan BPS"}
+    ]},
+    {dom:"Domain 5 — Sistem Statistik Nasional",items:[
+      {c:"50201",n:"Tingkat Kematangan Pelaksanaan Rekomendasi Kegiatan Statistik",h:"SS pengajuan di Romantik Online + surat rekomendasi BPS"},
+      {c:"50302",n:"Tingkat Kematangan Penyebarluasan Data",h:"SS penyebarluasan di website OPD dan portal Satu Data Pangkalpinang"}
+    ]}
+  ],
+  disdik:[
+    {dom:"Domain 1 — Prinsip Satu Data Indonesia",items:[
+      {c:"10101",n:"Tingkat Kematangan Penerapan SDS",h:"Screenshot SDS di INDAH + kesesuaian variabel/indikator dengan SDSN"},
+      {c:"10201",n:"Tingkat Kematangan Penerapan Metadata Statistik",h:"Screenshot metadata kegiatan, variabel, indikator utama di INDAH"},
+      {c:"10301",n:"Tingkat Kematangan Penerapan Interoperabilitas Data",h:"Screenshot API/webservice atau notulensi rapat evaluasi interoperabilitas"},
+      {c:"10401",n:"Tingkat Kematangan Penerapan Kode Referensi",h:"Screenshot penggunaan kode referensi pada raw data dan penyajian data"}
+    ]},
+    {dom:"Domain 2 — Kualitas Data",items:[
+      {c:"20101",n:"Tingkat Kematangan Relevansi Data Terhadap Pengguna",h:"KAK/TOR + surat permintaan data dari instansi lain"},
+      {c:"20102",n:"Tingkat Kematangan Proses Identifikasi Kebutuhan Data",h:"KAK/TOR yang memuat latar belakang dan tujuan kegiatan"},
+      {c:"20201",n:"Tingkat Kematangan Penilaian Akurasi Data",h:"Laporan dan dokumentasi pemeriksaan data secara sistematis"},
+      {c:"20301",n:"Tingkat Kematangan Penjaminan Aktualitas Data",h:"KAK yang memuat jadwal dari perencanaan hingga penyebarluasan"},
+      {c:"20302",n:"Tingkat Kematangan Pemantauan Ketepatan Waktu Diseminasi",h:"Laporan monitoring ketepatan waktu + ketersediaan di portal data"},
+      {c:"20401",n:"Tingkat Kematangan Ketersediaan Data untuk Pengguna Data",h:"Katalog data, dokumen metadata, SS publikasi di website dan portal"},
+      {c:"20402",n:"Tingkat Kematangan Akses Media Penyebarluasan Data",h:"SS penyebarluasan di website, media sosial, portal data Pangkalpinang"},
+      {c:"20403",n:"Tingkat Kematangan Penyediaan Format Data",h:"SS portal yang menunjukkan berbagai format unduhan (xls, pdf, csv, dll)"},
+      {c:"20501",n:"Tingkat Kematangan Keterbandingan Data",h:"Laporan analisis keterbandingan antarwaktu/antarwilayah"},
+      {c:"20502",n:"Tingkat Kematangan Konsistensi Statistik",h:"Laporan analisis konsistensi dengan data BPS atau sumber lain"}
+    ]},
+    {dom:"Domain 3 — Proses Bisnis Statistik",items:[
+      {c:"30101",n:"Tingkat Kematangan Pendefinisian Kebutuhan Statistik",h:"KAK/TOR yang memuat latar belakang, tujuan, identifikasi kebutuhan"},
+      {c:"30102",n:"Tingkat Kematangan Desain Statistik",h:"Rancangan output/tabel, sistem alur kerja (jadwal kegiatan)"},
+      {c:"30103",n:"Tingkat Kematangan Penyiapan Instrumen",h:"Template publikasi/laporan, template excel beserta penjelasannya"},
+      {c:"30201",n:"Tingkat Kematangan Proses Pengumpulan Data",h:"Dokumentasi pengumpulan data + surat tugas/surat permintaan data"},
+      {c:"30301",n:"Tingkat Kematangan Pengolahan Data",h:"SS aplikasi pengolahan (Excel/software) + proses entri data"},
+      {c:"30302",n:"Tingkat Kematangan Analisis Data",h:"Publikasi/laporan yang memuat narasi/analisis yang mendeskripsikan data"},
+      {c:"30401",n:"Tingkat Kematangan Diseminasi Data",h:"Publikasi/laporan resmi yang memuat data-data yang dihasilkan"}
+    ]},
+    {dom:"Domain 4 — Kelembagaan Statistik",items:[
+      {c:"40303",n:"Tingkat Kematangan Kolaborasi dengan Pembina Data Statistik (BPS)",h:"SS percakapan atau foto pertemuan/koordinasi dengan BPS"}
+    ]},
+    {dom:"Domain 5 — Sistem Statistik Nasional",items:[
+      {c:"50201",n:"Tingkat Kematangan Pelaksanaan Rekomendasi Kegiatan Statistik",h:"SS pengajuan di Romantik Online + surat rekomendasi BPS"}
+    ]}
+  ]
+};
+
+// ── State ──────────────────────────────────────────────────────────────────────
+let S={apikey:'',opd:'',opd_label:'',kegiatan:'',tahun:'2025',jenis:'',sektor:'',deskripsi:'',indikator:'',sumber:'',mulai:'',selesai:'',selected:[],narratives:{}};
+function getInds(){return INDS[S.opd]||INDS.dispar;}
+
+// ── API Key UI ─────────────────────────────────────────────────────────────────
+function checkKey(){
+  const v=document.getElementById('f_apikey').value.trim();
+  const el=document.getElementById('key-status');
+  if(!v){el.className='key-status';return;}
+  if(v.startsWith('sk-ant-')){el.className='key-status ok';el.textContent='✓ Format API Key valid';}
+  else{el.className='key-status bad';el.textContent='⚠ Harus diawali sk-ant- — cek kembali';}
+}
+function toggleKeyVis(){
+  const f=document.getElementById('f_apikey');
+  f.type=f.type==='password'?'text':'password';
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────────
+function showScreen(n){
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('sc'+i).style.display=i===n?'block':'none';
+    const s=document.getElementById('st'+i);
+    s.className='step'+(i<n?' done':i===n?' active':'');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goStep1(){showScreen(1);}
+function goStep2(){
+  S.apikey   =document.getElementById('f_apikey').value.trim();
+  S.opd      =document.getElementById('f_opd').value;
+  S.kegiatan =document.getElementById('f_kegiatan').value.trim();
+  S.tahun    =document.getElementById('f_tahun').value;
+  S.jenis    =document.getElementById('f_jenis').value;
+  S.sektor   =document.getElementById('f_sektor').value;
+  S.deskripsi=document.getElementById('f_deskripsi').value.trim();
+  S.indikator=document.getElementById('f_indikator').value.trim();
+  S.sumber   =document.getElementById('f_sumber').value.trim();
+  S.mulai    =document.getElementById('f_mulai').value.trim()||'Januari 2025';
+  S.selesai  =document.getElementById('f_selesai').value.trim()||'Desember 2025';
+  S.opd_label=S.opd==='dispar'?'Dinas Pariwisata Kota Pangkalpinang':'Dinas Pendidikan dan Kebudayaan Kota Pangkalpinang';
+  if(!S.apikey){alert('Masukkan API Key Anthropic!\n\nCara mendapatkan:\n1. Buka console.anthropic.com\n2. Klik Settings → API Keys\n3. Klik Create Key\n4. Copy dan paste di sini');return;}
+  if(!S.opd){alert('Pilih OPD terlebih dahulu!');return;}
+  if(!S.kegiatan){alert('Masukkan nama kegiatan statistik!');return;}
+  renderIndList();showScreen(2);
+}
+
+// ── Indicator list ─────────────────────────────────────────────────────────────
+function renderIndList(){
+  const inds=getInds();
+  S.selected=inds.flatMap(d=>d.items.map(i=>i.c));
+  const el=document.getElementById('ind-list');el.innerHTML='';
+  inds.forEach(dom=>{
+    const g=document.createElement('div');g.className='dom-group';
+    g.innerHTML=`<div class="dom-title">${dom.dom}</div>`;
+    dom.items.forEach(it=>{
+      const d=document.createElement('div');d.className='ind-item sel';d.id='ii-'+it.c;
+      d.innerHTML=`<input type="checkbox" id="chk-${it.c}" checked onchange="toggleInd('${it.c}',this.checked)">
+        <div><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:2px">
+          <span class="ind-code">${it.c}</span><span class="ind-name">${it.n}</span></div>
+          <div class="ind-hint">📎 ${it.h}</div></div>`;
+      g.appendChild(d);
+    });
+    el.appendChild(g);
+  });
+  updateCount();
+}
+function toggleInd(c,v){
+  document.getElementById('ii-'+c).classList.toggle('sel',v);
+  if(v)S.selected.push(c);else S.selected=S.selected.filter(x=>x!==c);
+  updateCount();
+}
+function selectAll(v){
+  getInds().flatMap(d=>d.items).forEach(it=>{
+    const chk=document.getElementById('chk-'+it.c);
+    if(chk){chk.checked=v;document.getElementById('ii-'+it.c).classList.toggle('sel',v);}
+  });
+  S.selected=v?getInds().flatMap(d=>d.items.map(i=>i.c)):[];updateCount();
+}
+function updateCount(){document.getElementById('sel-count').textContent=S.selected.length+' indikator dipilih';}
+
+function goStep3(){
+  if(!S.selected.length){alert('Pilih minimal satu indikator!');return;}
+  showScreen(3);document.getElementById('log-box').innerHTML='';generate();
+}
+
+// ── Generate — tries multiple approaches ──────────────────────────────────────
+function log(msg,type=''){
+  const lb=document.getElementById('log-box');
+  const d=document.createElement('div');
+  d.className='log-line'+(type?' '+type:'');
+  d.textContent={ok:'✓ ',err:'✗ ',warn:'⚠ '}[type]||'⏳ ';
+  d.textContent+=msg;lb.appendChild(d);lb.scrollTop=lb.scrollHeight;
+}
+
+function buildPayload(){
+  const allItems=getInds().flatMap(d=>d.items).filter(it=>S.selected.includes(it.c));
+  const indList=allItems.map(it=>`- [${it.c}] ${it.n}\n  Bukti: ${it.h}`).join('\n');
+  return {
+    model:'claude-sonnet-4-20250514',
+    max_tokens:8000,
+    messages:[{role:'user',content:`Kamu adalah pakar EPSS (Evaluasi Penyelenggaraan Statistik Sektoral) BPS Indonesia. Buat narasi profesional untuk dokumen Bukti Dukung EPSS 2025 Kota Pangkalpinang.
+
+OPD: ${S.opd_label}
+Kegiatan: ${S.kegiatan}
+Tahun: ${S.tahun} | Jenis: ${S.jenis} | Sektor: ${S.sektor}
+Deskripsi: ${S.deskripsi||'Kegiatan statistik sektoral yang dilaksanakan secara sistematis untuk menghasilkan data berkualitas dan akuntabel.'}
+Variabel: ${S.indikator||'berbagai indikator sektoral yang relevan'}
+Sumber: ${S.sumber||'berbagai instansi terkait di Kota Pangkalpinang'}
+Jadwal: ${S.mulai} s.d. ${S.selesai}
+Referensi: data.pangkalpinangkota.go.id | indah.bps.go.id | romantik.bps.go.id | Perpres 39/2019
+
+INDIKATOR:
+${indList}
+
+KETENTUAN:
+- Bahasa Indonesia formal, gaya dokumen resmi pemerintah
+- Tiap narasi: 2-3 paragraf (min. 3 kalimat/paragraf)
+- Wajib sebut nama OPD dan kegiatan secara spesifik
+- Tunjukkan tingkat kematangan tinggi
+- Spesifik pada konteks OPD dan sektor
+
+KEMBALIKAN HANYA JSON (tanpa teks lain, tanpa backtick):
+{"narratives":{"KODE":"NARASI\\n\\nNARASI",...}}`}]
+  };
+}
+
+async function tryFetch(url, headers, body){
+  const r=await fetch(url,{method:'POST',headers,body:JSON.stringify(body)});
+  if(!r.ok){const t=await r.text();throw new Error('HTTP '+r.status+': '+t.slice(0,300));}
+  return r.json();
+}
+
+async function generate(){
+  const payload=buildPayload();
+  const count=getInds().flatMap(d=>d.items).filter(it=>S.selected.includes(it.c)).length;
+  log(`Menyiapkan ${count} indikator...`);
+
+  const baseHeaders={
+    'Content-Type':'application/json',
+    'x-api-key':S.apikey,
+    'anthropic-version':'2023-06-01'
+  };
+
+  // Daftar proxy — dicoba satu per satu
+  const strategies=[
+    {
+      label:'Mencoba koneksi langsung...',
+      fn:()=>tryFetch('https://api.anthropic.com/v1/messages',
+        {...baseHeaders,'anthropic-dangerous-direct-browser-access':'true'},payload)
+    },
+    {
+      label:'Mencoba via proxy 1 (corsproxy.io)...',
+      fn:()=>tryFetch('https://corsproxy.io/?https://api.anthropic.com/v1/messages',
+        baseHeaders,payload)
+    },
+    {
+      label:'Mencoba via proxy 2 (allorigins)...',
+      fn:async()=>{
+        const r=await fetch('https://api.allorigins.win/post?url='+encodeURIComponent('https://api.anthropic.com/v1/messages'),{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({headers:baseHeaders,body:JSON.stringify(payload)})
+        });
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        const j=await r.json();
+        return JSON.parse(j.contents);
+      }
+    },
+    {
+      label:'Mencoba via proxy 3 (workers.dev)...',
+      fn:()=>tryFetch('https://claude-proxy.deno.dev/v1/messages',
+        baseHeaders,payload)
+    }
+  ];
+
+  for(const s of strategies){
+    log(s.label);
+    try{
+      const data=await s.fn();
+      log('Berhasil terhubung! Memproses respons...','ok');
+
+      let txt=data.content.map(b=>b.text||'').join('').trim();
+      txt=txt.replace(/^```json?\s*/i,'').replace(/\s*```$/,'').trim();
+      const parsed=JSON.parse(txt);
+      S.narratives=parsed.narratives||{};
+      log(`${Object.keys(S.narratives).length} narasi berhasil dibuat!`,'ok');
+      setTimeout(()=>{renderResults();showScreen(4);},500);
+      return; // sukses, hentikan loop
+
+    }catch(err){
+      log('Gagal: '+err.message.slice(0,120),'warn');
+      // lanjut ke strategi berikutnya
+    }
+  }
+
+  // Semua gagal
+  log('Semua metode koneksi gagal.','err');
+  setTimeout(()=>{
+    alert(
+      'Tidak dapat terhubung ke AI.\n\n'+
+      'Kemungkinan penyebab:\n'+
+      '• API Key salah atau kadaluarsa\n'+
+      '• Semua proxy sedang down\n\n'+
+      'Solusi terbaik:\n'+
+      'Buka file HTML melalui VS Code Live Server\natau jalankan: python -m http.server 8080\nlalu buka http://localhost:8080'
+    );
+    showScreen(2);
+  },400);
+}
+
+// ── Render results ─────────────────────────────────────────────────────────────
+function renderResults(){
+  document.getElementById('sc4-sub').textContent=`${S.opd_label} — ${S.kegiatan} Tahun ${S.tahun} (${S.selected.length} indikator)`;
+  const container=document.getElementById('result-content');container.innerHTML='';
+  getInds().forEach(dom=>{
+    if(!dom.items.some(it=>S.selected.includes(it.c)))return;
+    const sec=document.createElement('div');sec.className='dom-section';
+    sec.innerHTML=`<div class="dom-section-title">${dom.dom}</div>`;
+    dom.items.forEach(it=>{
+      if(!S.selected.includes(it.c))return;
+      const narr=S.narratives[it.c]||'[Narasi tidak tersedia — edit secara manual]';
+      const blk=document.createElement('div');blk.className='narr-block';
+      blk.innerHTML=`<div class="narr-top">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="ind-code">${it.c}</span><strong style="font-size:12px">${it.n}</strong>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-secondary" style="font-size:11px;padding:5px 11px" onclick="toggleEdit('${it.c}',this)">✏ Edit</button>
+            <button class="btn btn-copy" onclick="copySingle('${it.c}')">📋 Salin</button>
+          </div>
+        </div>
+        <div class="narr-body" id="nb-${it.c}">${escH(narr)}</div>
+        <textarea class="narr-edit" id="ta-${it.c}">${escH(narr)}</textarea>`;
+      sec.appendChild(blk);
+    });
+    container.appendChild(sec);
+  });
+}
+
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function toggleEdit(c,btn){
+  const nb=document.getElementById('nb-'+c),ta=document.getElementById('ta-'+c);
+  if(btn.textContent.includes('Edit')){
+    ta.value=S.narratives[c]||'';nb.style.display='none';ta.style.display='block';ta.focus();btn.textContent='💾 Simpan';
+  }else{
+    S.narratives[c]=ta.value;nb.textContent=ta.value;ta.style.display='none';nb.style.display='block';btn.textContent='✏ Edit';
+  }
+}
+function copySingle(c){
+  const item=getInds().flatMap(d=>d.items).find(i=>i.c===c);
+  doCopy(`${c}. ${item?.n||''}\n${'─'.repeat(60)}\n${S.narratives[c]||''}`,'Narasi '+c+' berhasil disalin!');
+}
+function copyAll(){
+  let out=`BUKTI DUKUNG EVALUASI PENYELENGGARAAN STATISTIK SEKTORAL\nKOTA PANGKALPINANG\n\nKegiatan : ${S.kegiatan}\nTahun    : ${S.tahun}\nOPD      : ${S.opd_label}\n${'═'.repeat(70)}\n`;
+  getInds().forEach(dom=>{
+    if(!dom.items.some(it=>S.selected.includes(it.c)))return;
+    out+=`\n${dom.dom.toUpperCase()}\n${'─'.repeat(70)}\n\n`;
+    dom.items.forEach(it=>{
+      if(!S.selected.includes(it.c))return;
+      out+=`${it.c}. ${it.n}\n${'─'.repeat(60)}\n${S.narratives[it.c]||'[Narasi tidak tersedia]'}\n\n`;
+    });
+  });
+  doCopy(out,`Semua narasi (${S.selected.length} indikator) berhasil disalin!`);
+}
+function doCopy(text,msg){
+  const done=()=>showToast(msg);
+  if(navigator.clipboard){navigator.clipboard.writeText(text).then(done).catch(()=>fallback(text,done));}
+  else fallback(text,done);
+}
+function fallback(text,cb){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');cb();}catch(e){alert('Gagal menyalin otomatis — coba Ctrl+A lalu Ctrl+C.');}
+  document.body.removeChild(ta);
+}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent='✓ '+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
